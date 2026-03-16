@@ -38,6 +38,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(loaded_config.llm.model, "")
         self.assertEqual(loaded_config.llm.base_url, "")
         self.assertFalse(loaded_config.llm.stream)
+
     
     def test_config_invalid_llm_model(self):
         config = Config(
