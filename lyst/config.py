@@ -78,9 +78,4 @@ def show_config():
     except FileNotFoundError:
         print("No configuration found. Please run 'lyst config set' to create one.")
 
-def set_config(provider: str, model: str, base_url: str, stream: bool, connection: str):
-    config = Config(
-        llm=LLMConfig(provider=provider, model=model, base_url=base_url, stream=stream),
-        db=DBConfig(connection=connection)
-    )
-    save_config(config)
+
