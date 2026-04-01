@@ -56,28 +56,6 @@ def save_config(config: Config) -> None:
 
 
 def reset_config() -> None:
-    """Reset to environment defaults (clear in-memory override)."""
     global _config_override
     _config_override = None
-
-
-def show_config() -> None:
-    """Print current configuration (for CLI use)."""
-    import json
-    config = load_config()
-    api_key = config.llm.api_key or os.environ.get("LYST_LLM_API_KEY", "")
-    api_key_status = "Set" if api_key else "Not Set"
-    print(json.dumps({
-        "llm": {
-            "provider": config.llm.provider,
-            "model": config.llm.model,
-            "api_key": api_key_status,
-            "base_url": config.llm.base_url,
-            "stream": config.llm.stream
-        },
-        "db": {
-            "connection": config.db.connection
-        }
-    }, indent=4))
-
 
