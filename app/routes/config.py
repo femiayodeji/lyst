@@ -1,11 +1,9 @@
 import os
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from app.config import load_config
-from app.db.engine import get_schema, get_db_type
-from app.db.schema import cached_schema, cached_db_type
 from app.state import AppState, get_state
 
 router = APIRouter()

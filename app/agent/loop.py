@@ -43,19 +43,6 @@ def _call_llm(
     return completion(**kwargs)
 
 
-def _process_tool_calls(assistant_message: Any) -> list[dict]:
-    if not assistant_message.tool_calls:
-        return []
-    return [
-        {
-            "id": tc.id,
-            "name": tc.function.name,
-            "arguments": json.loads(tc.function.arguments) if tc.function.arguments else {},
-        }
-        for tc in assistant_message.tool_calls
-    ]
-
-
 def _extract_chunk_text(chunk: Any) -> str:
     try:
         choice = chunk.choices[0]

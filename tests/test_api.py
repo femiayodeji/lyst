@@ -9,13 +9,6 @@ from app.state import AppState, Session
 from app.config import Config, LLMConfig, DBConfig
 
 
-def _override_state() -> AppState:
-    """Return (or create) a test AppState attached to the app."""
-    if not hasattr(app.state, "app_state"):
-        app.state.app_state = AppState()
-    return app.state.app_state
-
-
 class TestConfigEndpoints(unittest.TestCase):
     """Tests for /config endpoints."""
 
