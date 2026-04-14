@@ -81,7 +81,7 @@ def run_agent(
     message: str,
     history: list[dict],
     state: AppState,
-    max_iterations: int = 10,
+    max_iterations: int = 5,
 ) -> Generator[dict, None, None]:
     """
     Transport-agnostic agent loop.
