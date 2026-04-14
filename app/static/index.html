@@ -59,6 +59,11 @@ body {
   overflow: hidden;
   background: linear-gradient(135deg, #fafaff 0%, #f0f0ff 100%);
   border-bottom: 1px solid var(--border);
+  transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero.hero-expanded {
+  height: 100vh;
 }
 
 #hex-canvas {
@@ -77,6 +82,15 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-expanded .hero-content {
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .logo-name {
@@ -85,6 +99,11 @@ body {
   letter-spacing: -0.03em;
   color: var(--indigo-dark);
   line-height: 1;
+  transition: font-size 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-expanded .logo-name {
+  font-size: 5rem;
 }
 
 .logo-name span { color: var(--indigo); }
@@ -96,11 +115,24 @@ body {
   text-transform: uppercase;
   margin-top: 0.4rem;
   font-family: var(--mono);
+  transition: font-size 0.8s cubic-bezier(0.4, 0, 0.2, 1), margin-top 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-expanded .logo-tagline {
+  font-size: 0.85rem;
+  margin-top: 0.8rem;
 }
 
 .header-actions {
   display: flex;
   gap: 0.5rem;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.hero-expanded .header-actions {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
 }
 
 .header-btn {
@@ -134,6 +166,14 @@ body {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 180px);
+  opacity: 1;
+  transition: opacity 0.6s ease 0.2s;
+}
+
+body.hero-is-expanded .main-container {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -935,10 +975,10 @@ body {
 }
 </style>
 </head>
-<body>
+<body class="hero-is-expanded">
 
 <!-- HERO -->
-<div class="hero">
+<div class="hero hero-expanded">
   <canvas id="hex-canvas"></canvas>
   <div class="hero-content">
     <div>
@@ -1153,6 +1193,24 @@ body {
   window.addEventListener('resize', resize);
   resize();
   draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO COLLAPSE AFTER 2s
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function() {
+  const hero = document.querySelector('.hero');
+  setTimeout(() => {
+    hero.classList.remove('hero-expanded');
+    document.body.classList.remove('hero-is-expanded');
+    // Trigger canvas resize after transition ends
+    hero.addEventListener('transitionend', function onEnd(e) {
+      if (e.propertyName === 'height') {
+        window.dispatchEvent(new Event('resize'));
+        hero.removeEventListener('transitionend', onEnd);
+      }
+    });
+  }, 2000);
 })();
 
 /* ═══════════════════════════════════════════════════════════════════════════
