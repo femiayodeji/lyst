@@ -104,3 +104,40 @@ def _get_database_info(state: AppState) -> dict[str, Any]:
     from app.db.engine import get_db_type
     db_type = get_db_type(state)
     return {"success": True, "result": {"database_type": db_type}}
+
+
+@tool(
+    name="visualize_data",
+    description=(
+        "Recommend a chart visualization for the most recent SQL query results. "
+        "Call this AFTER execute_sql when the data is suitable for a chart. "
+        "The UI will render the chart automatically using your recommendation."
+    ),
+    parameters={
+        "type": "object",
+        "properties": {
+            "chart_type": {
+                "type": "string",
+                "enum": ["bar", "line", "pie", "doughnut"],
+                "description": (
+                    "The chart type that best represents the data. "
+                    "Use 'bar' for comparisons, 'line' for time-series/trends, "
+                    "'pie' or 'doughnut' for proportions with few categories (<=8)."
+                ),
+            },
+            "title": {
+                "type": "string",
+                "description": "A short, descriptive chart title (e.g. 'Orders by Country', 'Monthly Revenue Trend').",
+            },
+        },
+        "required": ["chart_type", "title"],
+    },
+)
+def _visualize_data(state: AppState, chart_type: str = "bar", title: str = "") -> dict[str, Any]:
+    return {
+        "success": True,
+        "result": {
+            "chart_type": chart_type,
+            "title": title,
+        },
+    }

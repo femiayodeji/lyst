@@ -179,6 +179,13 @@ def run_agent(
                             "error": result.get("error", "Unknown error"),
                         }}
 
+                if tc_info["name"] == "visualize_data" and result.get("success"):
+                    viz = result["result"]
+                    yield {"type": "visualize", "data": {
+                        "chart_type": viz["chart_type"],
+                        "title": viz["title"],
+                    }}
+
                 messages.append({
                     "role": "tool",
                     "tool_call_id": tc_info["id"],

@@ -1279,17 +1279,7 @@ function addAssistantMessage(content, sql = null, results = null) {
   
   let html = '';
   
-  // SQL block
-  if (sql) {
-    html += `
-      <div class="sql-block">
-        <div class="sql-header">📝 SQL Query</div>
-        <div class="sql-code">${esc(sql)}</div>
-      </div>
-    `;
-  }
-  
-  // Results table
+  // Results table (SQL is shown in the Query tab panel, not in chat)
   if (results && results.success && results.columns && results.columns.length > 0) {
     html += `
       <div class="results-block">
@@ -1375,6 +1365,7 @@ function removeStreamingAssistantMessage() {
 let currentChart = null;
 let currentChartType = null;
 let latestChartConfig = null;
+let currentVizHint = null;
 
 const CHART_COLORS = [
   '#4f46e5', '#7c3aed', '#0d9488', '#059669',
@@ -1395,7 +1386,7 @@ function updateResultsPanel(sql, results) {
   if (sql) updateQueryTab(sql);
   if (results) {
     updateTableTab(results);
-    updateVisualTab(results);
+    updateVisualTab(results, currentVizHint);
   }
   autoSelectTab(sql, results);
 }
@@ -1466,7 +1457,7 @@ function updateTableTab(results) {
   }
 }
 
-function updateVisualTab(results) {
+function updateVisualTab(results, vizHint = null) {
   const wrapper = document.getElementById('chart-wrapper');
   const controls = document.getElementById('chart-controls');
   const empty = document.getElementById('visual-empty');
@@ -1482,6 +1473,12 @@ function updateVisualTab(results) {
     controls.style.display = 'none';
     wrapper.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Unable to visualize this data as a chart</p>';
     return;
+  }
+
+  // Apply agent visualization hint if available
+  if (vizHint) {
+    if (vizHint.chart_type) config.type = vizHint.chart_type;
+    if (vizHint.title) config.title = vizHint.title;
   }
 
   empty.style.display = 'none';
@@ -1662,6 +1659,7 @@ async function sendMessage() {
   let currentSql = null;
   let currentResults = null;
   let messageContent = '';
+  currentVizHint = null;
   
   try {
     const response = await fetch('/agent/stream', {
@@ -1724,6 +1722,14 @@ async function sendMessage() {
             updateVisualTab(currentResults);
           }
           break;
+        case 'visualize': {
+          const vizPayload = eventPayload(data);
+          if (vizPayload) {
+            currentVizHint = vizPayload;
+            updateVisualTab(currentResults, currentVizHint);
+          }
+          break;
+        }
         case 'message_chunk': {
           const payload = eventPayload(data);
           if (typeof payload === 'string' && payload) {
