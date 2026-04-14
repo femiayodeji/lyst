@@ -68,7 +68,10 @@ def execute_tool(name: str, arguments: dict[str, Any], state: AppState) -> dict[
             sql = arguments.get("sql", "")
             hint = _extract_schema_hint(sql, state)
             if hint:
-                error_msg += f"\n\nRelevant schema for the tables referenced in your query:\n{hint}"
+                error_msg += (
+                    f"\n\nHere is the actual schema for the tables you referenced — "
+                    f"use these exact column names in your corrected query:\n{hint}"
+                )
         return {"success": False, "error": error_msg}
 
 

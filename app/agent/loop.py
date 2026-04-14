@@ -81,7 +81,7 @@ def run_agent(
     message: str,
     history: list[dict],
     state: AppState,
-    max_iterations: int = 5,
+    max_iterations: int = 10,
 ) -> Generator[dict, None, None]:
     """
     Transport-agnostic agent loop.
@@ -228,7 +228,7 @@ def run_agent(
 
             yield {"type": "status", "data": "Analyzing results..."}
 
-        yield {"type": "message_complete", "data": "Reached maximum iterations. Please try a simpler question."}
+        yield {"type": "message_complete", "data": "I used all available steps on this question. Please try rephrasing or breaking it into smaller parts."}
         yield {"type": "done", "data": {}}
 
     except RateLimitError:
